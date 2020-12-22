@@ -32,24 +32,33 @@
             <?php the_custom_logo();?>             
             <span class="slogan">Твой фитнес клуб всегда рядом!</span>
           </p>
+          <?php 
+            $locations = get_nav_menu_locations();
+            $menu_id = $locations['menu-footer'];
+            $menu_items = wp_get_nav_menu_items($menu_id, [
+              'order' => 'ASC',
+              'orderby' => 'menu_order',
+            ]);
+
+          ?>
           <nav class="main-navigation">
             <ul class="main-navigation__list">
-              <li>
-                <a href="services.html">Услуги</a>
+              <?php 
+                  $http_s = 'http' . ( ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ) ? 's' :'' ) . '://';
+                  $url = $http_s . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+                  foreach($menu_items as $item):
+                  $class_text ='';
+                  if ( $item->url === $url ) {
+                    $class_text ='class="active"';
+                  }
+              ?>
+              <li <?php echo $class_text; ?>>
+                <a href="<?php echo $item->url;?>">
+                  <?php echo $item->title;?>
+                </a>
               </li>
-              <li class="active">
-                <a href="trainers.html">Тренеры</a>
-              </li>
-              <li>
-                <a href="schedule.html">Расписание</a>
-              </li>
-              <li>
-                <a href="prices.html">Цены</a>
-              </li>
-              <li>
-                <a href="contacts.html">Контакты </a>
-              </li>
-            </ul>
+              <?php endforeach; ?>
+           </ul>
           </nav>
           <address class="main-header__widget widget-contacts">
             <a href="tel:88007003030" class="widget-contacts__phone"> 8 800 700 30 30 </a>
@@ -60,7 +69,13 @@
       <footer class="main-footer wrapper">
         <div class="row main-footer__row">
           <div class="main-footer__widget main-footer__widget_copyright">
-            <span class="widget-text"> © 2019 Все права защищены. SportIsland </span>
+            <span class="widget-text"> 
+              <?php 
+                if (is_active_sidebar('sc-footer-column-1')){
+                  dynamic_sidebar('sc-footer-column-1');
+                }            
+              ?>
+            </span>
           </div>
           <div class="main-footer__widget">
             <p class="widget-contact-mail"> Если у вас возникли вопросы, пожалуйста свяжитесь с нами по почте <a href="mailto:sportisland@gmail.ru">sportisland@gmail.ru</a>
