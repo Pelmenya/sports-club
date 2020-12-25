@@ -1,6 +1,16 @@
 <?php
 
-require_once(__DIR__ . '/inc/widget-text.php' );
+$widgets = [
+  'widget_text',
+  'widget_contacts',
+  'widget_cocial_links',
+  'widget_iframe',
+  'widget_info'
+];
+
+foreach ($widgets as $widget){
+  require_once(__DIR__ . '/inc/' . $widget . '.php' );
+}
 
 function _sc_assets_path($path) {
   return get_template_directory_uri() . '/assets/' . $path;
@@ -71,6 +81,11 @@ function _sc_assets_path($path) {
       'after_widget' => null
     ]);
     register_widget('sc_widget_text');
+    register_widget('sc_widget_contacts');
+    register_widget('sc_widget_cocial_links');
+    register_widget('sc_widget_iframe');
+    register_widget('sc_widget_info');
+
   }
 
   add_action('wp_enqueue_scripts', 'sc_scripts');
