@@ -12,11 +12,17 @@ foreach ($widgets as $widget){
   require_once(__DIR__ . '/inc/' . $widget . '.php' );
 }
 
-function _sc_assets_path($path) {
-  return get_template_directory_uri() . '/assets/' . $path;
-}
+  add_action( 'widgets_init', 'sc_register' );
+  add_action('wp_enqueue_scripts', 'sc_scripts');
+  add_action('after_setup_theme', 'sc_setup');
+  add_shortcode('sc-paste-link', 'sc_paste_link');
 
   add_filter('show_admin_bar','__return_false');
+  add_filter('sc_widget_text', 'do_shortcode');
+  
+  function _sc_assets_path($path) {
+    return get_template_directory_uri() . '/assets/' . $path;
+  }
   
   function sc_scripts() {
     wp_enqueue_script(
@@ -34,8 +40,6 @@ function _sc_assets_path($path) {
       'all'
     );
   }
-
-  add_action( 'widgets_init', 'sc_register' );
 
   function sc_register(){
     register_sidebar([
@@ -88,7 +92,40 @@ function _sc_assets_path($path) {
 
   }
 
-  add_action('wp_enqueue_scripts', 'sc_scripts');
+  function sc_paste_link($attr ){
+    $params = shortcode_atts([
+      'type' => '',
+      'text' => '',
+      'link' => 'link'
+    ], $attr);
+
+    $params['text'] = $params['text'] ? $params['text'] : $params['link']; 
+    if ($params['link']){
+      $protocol = '';
+      switch ($params['type']) {
+        case 'email':
+           $protocol = 'mailto:';
+          break;
+        case 'phone':
+          $tel = preg_replace('/[^+,0-9]/', '', $params['link']);
+          $protocol = 'tel:';
+          $params['link'] = $tel;
+          break;
+        default:
+          $protocol = '';
+          break;
+      }
+
+      $link = $protocol . $params['link'];
+      $text = $params['text'];
+
+      return "<a href=\"${link}\">${text}</a>";
+      
+    } else {
+      return '';
+    }
+  }
+
 
   function sc_setup() {
     register_nav_menu('menu-header', 'Меню в header сайта');
@@ -101,7 +138,6 @@ function _sc_assets_path($path) {
     //add_theme_support('menus');
   }
 
-  add_action('after_setup_theme', 'sc_setup');
 
 
 

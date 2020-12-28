@@ -71,8 +71,7 @@ class SC_Widget_Info extends WP_Widget {
 <?php
       break;
       case 'phone':
-        $pattern = '/[^+,0-9]/';
-        $tel = preg_replace($pattern, '', $instance['info']);
+        $tel = preg_replace('/[^+,0-9]/', '', $instance['info']);
 ?>
     <a 
       href="tel:<?php echo $tel;?>" 
